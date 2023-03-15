@@ -28,13 +28,14 @@ const signup = (req, res) => {
             .save()
             .then((user) => {
               const token = jwt.sign({ _id: user._id }, JWT_SECRET);
-              res
-                .header("authorization", token)
-                .status(200)
-                .json({ token: token });
+              res.header("authorization", token).status(200).json({
+                _id: user._id,
+                token: token,
+                name: user.name,
+                email: user.email,
+              });
             })
             .catch((err) => {
-              
               console.log(err);
             });
         })
@@ -48,7 +49,7 @@ const signup = (req, res) => {
     });
 };
 
-const signin = (req, res) => {
+const login = (req, res) => {
   const email = req.query.email;
   const password = req.query.password;
   if (!email || !password) {
@@ -62,9 +63,15 @@ const signin = (req, res) => {
       .compare(password, savedUser.password)
       .then((doMatch) => {
         if (doMatch) {
-          //res.json({success: "Signed In Successfully"})
           const token = jwt.sign({ _id: savedUser._id }, JWT_SECRET);
-          res.header("authorization", token).json({ token: token });
+          res
+            .header("authorization", token)
+            .json({
+              _id: savedUser._id,
+              token: token,
+              name: savedUser.name,
+              email: savedUser.email,
+            });
         } else {
           res.status(422).json({ message: "Invalid email or password" });
         }
@@ -75,4 +82,4 @@ const signin = (req, res) => {
   });
 };
 
-module.exports = { signup, signin };
+module.exports = { signup, login };
