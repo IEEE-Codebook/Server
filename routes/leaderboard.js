@@ -8,6 +8,7 @@ const getRating = async (handle) => {
   const url = `https://codeforces.com/api/user.rating?handle=${handle}`;
   try {
     const response = await axios.get(url);
+
     const data = response.data.result;
     if (data.length === 0) {
       return 0;
@@ -20,7 +21,7 @@ const getRating = async (handle) => {
   }
 };
 
-app.post("/scores", async (req, res) => {
+app.post("/score", async (req, res) => {
   const { username, platform } = req.body;
   const score = await getRating(username);
   const newScore = new Leaderboard({ username, platform, score });
