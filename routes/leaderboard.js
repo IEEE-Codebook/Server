@@ -24,17 +24,21 @@ const getRating = async (handle) => {
 app.post("/score", async (req, res) => {
   const { username, platform } = req.body;
   const score = await getRating(username);
-  const newScore = new Leaderboard({ username, platform, score });
+  const newScore = { username, platform, score };
   try {
-    await newScore.save();
-    res.status(201).json(newScore);
+    const result = await Leaderboard.findOneAndReplace(
+      { username, platform },
+      newScore,
+      { new: true, upsert: true }
+    );
+    res.status(201).json(result);
   } catch (err) {
     console.error(err);
     res.status(500).send("Server error");
   }
 });
 
-app.get("/leaderboard/:platform", async (req, res) => {
+app.get("/:platform", async (req, res) => {
   const { platform } = req.params;
   try {
     const leaderboard = await Leaderboard.find({ platform });
