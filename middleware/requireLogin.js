@@ -1,25 +1,38 @@
-const jwt = require("jsonwebtoken")
-const {JWT_SECRET} = require("../key")
-const User = require('../models/user')
+const jwt = require("jsonwebtoken");
+const { JWT_SECRET } = require("../key");
+const User = require("../models/user");
 
-module.exports = async (req, res, next) => {
-    const bearerToken = req.header('authorization');
-    if(!bearerToken) {
-        return res.status(401).json({error:"you must log in"})
+const requireLogin = async (req, res, next) => {
+  let token;
+
+  if (
+    req.headers.authorization &&
+    req.headers.authorization.startsWith("Bearer")
+  ) {
+    try {
+      // Get token from header
+      token = req.headers.authorization.split(" ")[1];
+      // Verify token
+      const decoded = jwt.verify(token, JWT_SECRET);
+      // Get user from the token
+      const cur_user = await User.findById(decoded._id);
+      req.user = cur_user
+      // User.findOne({ _id: decoded.id }).then((cur_user) => {
+      //   console.log(cur_user);
+      //   req.user = cur_user;
+        next();
+      // });
+    } catch (error) {
+      console.log(error);
+      res.status(401);
+      throw new Error("Not authorized");
     }
-    try{
-        if (typeof bearerToken !== 'undefined') {
-            const bearer = bearerToken.split(' ');
-            const token = bearer[1];
-            const decoded = await jwt.verify(token, JWT_SECRET);
-            req.user = await User.findById(decoded.id);
-            next();
-        }
-        else {
-            res.status(400).send('Invalid token.');
-        }
-    }
-    catch (err) {
-        res.status(400).send('Invalid token.');
-    }
-}
+  }
+
+  if (!token) {
+    res.status(401);
+    throw new Error("Not authorized, no token");
+  }
+};
+
+module.exports = { requireLogin };

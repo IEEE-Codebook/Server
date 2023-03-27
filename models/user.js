@@ -14,6 +14,10 @@ const userSchema = new mongoose.Schema({
         type:String,
         required:true
     },
+    codeforces:{
+        type:String,
+        required:false,
+    },
     followers:[{
         type:ObjectId,
         ref:'User'

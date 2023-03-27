@@ -7,7 +7,8 @@ const signup = (req, res) => {
   const name = req.query.name;
   const email = req.query.email;
   const password = req.query.password;
-  if (!name || !email || !password) {
+  const codeforces = req.query.codeforces;
+  if (!name || !email || !password || !codeforces) {
     return res.status(422).json({ message: "Enter all fields" });
   }
   User.findOne({ email: email })
@@ -19,16 +20,17 @@ const signup = (req, res) => {
         .hash(password, 15)
         .then((hpass) => {
           const user = new User({
+            name,
             email,
             password: hpass,
-            name,
+            codeforces,
           });
 
           user
             .save()
             .then((user) => {
               const token = jwt.sign({ _id: user._id }, JWT_SECRET);
-              res.header("authorization", token).status(200).json({
+              res.status(200).json({
                 _id: user._id,
                 token: token,
                 name: user.name,
@@ -64,14 +66,12 @@ const login = (req, res) => {
       .then((doMatch) => {
         if (doMatch) {
           const token = jwt.sign({ _id: savedUser._id }, JWT_SECRET);
-          res
-            .header("authorization", token)
-            .json({
-              _id: savedUser._id,
-              token: token,
-              name: savedUser.name,
-              email: savedUser.email,
-            });
+          res.json({
+            _id: savedUser._id,
+            token: token,
+            name: savedUser.name,
+            email: savedUser.email,
+          });
         } else {
           res.status(422).json({ message: "Invalid email or password" });
         }

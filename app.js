@@ -1,8 +1,14 @@
 const express = require("express");
 const connectDB = require("./config/db.js");
+const jwt = require("jsonwebtoken");
 const cors = require("cors");
 const auth = require("./routes/auth.js");
 const user = require("./routes/user.js");
+const submissions = require("./routes/submissions")
+const User = require("./models/user");
+const profile = require("./routes/profile.js");
+const { requireLogin } = require("./middleware/requireLogin.js");
+const { JWT_SECRET } = require("./key.js");
 const app = express();
 const PORT = 8000;
 
@@ -12,9 +18,17 @@ app.use(express.urlencoded({ extended: true }));
 app.use(express.json());
 app.use(cors()); // comment if this gives error.
 
-app.use("/auth",auth);
-app.use("/user",user)
-
+app.use("/auth", auth);
+app.use("/user", user);
+app.use("/profile", profile);
+app.use("/submissions",submissions)
+app.use("/name", requireLogin, async (req, res) => {
+  const token = req.query.token;
+  const decoded = jwt.verify(token, JWT_SECRET);
+  const cur_user = await User.findById(decoded._id);
+  if (cur_user) res.status(200).json({ name: cur_user.name });
+  else res.status(404).json({ error: "No user found" });
+});
 app.listen(PORT, () => {
   console.log("server working on port ", PORT);
 });
