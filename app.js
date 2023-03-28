@@ -5,7 +5,6 @@ const cors = require("cors");
 const auth = require("./routes/auth.js");
 const user = require("./routes/user.js");
 const submissions = require("./routes/submissions");
-const image = require("./models/image");
 const User = require("./models/user");
 const profile = require("./routes/profile.js");
 const { requireLogin } = require("./middleware/requireLogin.js");
@@ -15,11 +14,7 @@ const server = require('http').Server(app);
 const PORT = 8000;
 const axios = require("axios");
 
-const requireLogin = require("./middleware/requireLogin.js");
 
-
-
-let gfs;
 connectDB();
 
 app.use(express.urlencoded({ extended: true }));
