@@ -3,7 +3,7 @@ const jwt = require("jsonwebtoken");
 const User = require("../models/user.js");
 const { JWT_SECRET } = require("../key");
 
-const signup = (req, res) => {
+const signup = async (req, res) => {
   const name = req.query.name;
   const email = req.query.email;
   const password = req.query.password;
@@ -49,7 +49,7 @@ const signup = (req, res) => {
     });
 };
 
-const login = (req, res) => {
+const login = async (req, res) => {
   const email = req.query.email;
   const password = req.query.password;
   if (!email || !password) {
