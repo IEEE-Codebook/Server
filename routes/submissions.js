@@ -8,8 +8,7 @@ const {
 } = require("../controllers/submissions");
 
 router.get("/me", requireLogin, mySubmission);
-router.get("/:id",requireLogin,getSubmission)
-router.get("/friend",requireLogin,friendSubmission)
-
+// router.get("/:id", requireLogin, getSubmission);
+router.get("/friend", requireLogin, friendSubmission);
 
 module.exports = router;

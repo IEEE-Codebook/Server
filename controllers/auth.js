@@ -8,7 +8,8 @@ const signup = async (req, res) => {
   const email = req.query.email;
   const password = req.query.password;
   const codeforces = req.query.codeforces;
-  if (!name || !email || !password || !codeforces) {
+  const atcoder = req.query.atcoder;
+  if (!name || !email || !password) {
     return res.status(422).json({ message: "Enter all fields" });
   }
   User.findOne({ email: email })
@@ -24,6 +25,7 @@ const signup = async (req, res) => {
             email,
             password: hpass,
             codeforces,
+            atcoder,
           });
 
           user

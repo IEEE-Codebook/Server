@@ -18,6 +18,10 @@ const userSchema = new mongoose.Schema({
         type:String,
         required:false,
     },
+    atcoder:{
+        type:String,
+        required:false,
+    },
     followers:[{
         type:ObjectId,
         ref:'User'
