@@ -17,9 +17,6 @@ const requireLogin = async (req, res, next) => {
       // Get user from the token
       const cur_user = await User.findById(decoded._id);
       req.user = cur_user
-      // User.findOne({ _id: decoded.id }).then((cur_user) => {
-      //   console.log(cur_user);
-      //   req.user = cur_user;
         next();
       // });
     } catch (error) {
