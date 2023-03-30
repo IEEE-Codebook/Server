@@ -36,4 +36,22 @@ const updateHandle = async (req, res) => {
   await user_to_change.save();
   res.json({ name: name, email: email, atcoder: handle1, codeforces: handle2 });
 };
-module.exports = { getProfile, updateHandle };
+
+const addFriend = async (req, res) => {
+  try {
+    const cur_user = req.user;
+    const userToAddFriend = req.query.username;
+    const addUser = await user.findOne({ name: userToAddFriend });
+    if (cur_user.following.includes(addUser._id)) {
+      res.status(200).json({ following: addUser.following });
+    } else {
+      cur_user.following.push(addUser._id);
+      await cur_user.save();
+      res.status(200).json({ following: addUser.following });
+    }
+  } catch (err) {
+    res.status(404).send({ error: err });
+  }
+};
+
+module.exports = { getProfile, updateHandle, addFriend };
