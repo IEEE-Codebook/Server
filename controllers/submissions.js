@@ -10,17 +10,9 @@ const friendSubmission = async (req, res) => {
   const following = req.user.following;
   var subs = [];
   var atSubs = [];
+  // console.log(following);
   for (var i = 0; i < following.length; i++) {
     const u = await user.findOne({ _id: following[i] });
-    if (u.codeforces) {
-      const URL =
-        "https://codeforces.com/api/user.status?handle=" +
-        u.codeforces +
-        "&from=1&count=100";
-      const submits = await axios.get(URL);
-      subs.push(u.codeforces);
-      subs.push(submits.data.result);
-    }
     if (u.atcoder) {
       const atCoder_URL =
         "https://kenkoooo.com/atcoder/atcoder-api/v3/user/submissions?user=" +
